@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="filters" method="get" action="{{ url_for('index') }}">
+  <input type="search" name="q" placeholder="Search keyword…" value="{{ filters.q }}">
+  <select name="trend">
+    <option value="">All trends</option>
+    {% for t in all_trends %}
+      <option value="{{ t }}" {{ 'selected' if filters.trend == t else '' }}>{{ t }}</option>
+    {% endfor %}
+  </select>
+  <select name="industry">
+    <option value="">All industries</option>
+    {% for i in all_industries %}
+      <option value="{{ i }}" {{ 'selected' if filters.industry == i else '' }}>{{ i }}</option>
+    {% endfor %}
+  </select>
+  <select name="min_urgency">
+    {% for val in [0, 50, 70, 85] %}
+      <option value="{{ val }}" {{ 'selected' if filters.min_urgency == val else '' }}>Urgency ≥ {{ val }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+<div class="stats">
+  Showing {{ rows | length }} of {{ total }} articles ·
+  generated {{ generated_at.strftime('%Y-%m-%d %H:%M UTC') }}
+</div>
+
+{% if alerts %}
+<section>
+  <h2 style="font-size:1rem;">🚨 Active alerts ({{ alerts | length }})</h2>
+  {% for a in alerts[:5] %}
+    <div class="card high"><span class="badge high">{{ a.urgency_score }}</span>
+      <strong> {{ a.trend }}</strong> — <a href="{{ a.link }}">{{ a.title }}</a>
+      <div class="meta">{{ a.source }} · {{ a.reason }}</div>
+    </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if rows %}
+  {% for row in rows %}
+    {% set e = row.e %}
+    <article class="card {{ e.risk_class if e.risk_class is defined else ('crit' if e.urgency_score >= 85 else 'high' if e.urgency_score >= 70 else 'med' if e.urgency_score >= 50 else 'low') }}">
+      <span class="badge {{ 'crit' if e.urgency_score >= 85 else 'high' if e.urgency_score >= 70 else 'med' if e.urgency_score >= 50 else 'low' }}">
+        {{ e.urgency_score }}
+      </span>
+      <span class="tag">{{ e.trend }} {{ (e.trend_confidence * 100) | round | int }}%</span>
+      {% for i in row.industries %}<span class="tag">{{ i }}</span>{% endfor %}
+      <h3>{{ row.article.title }}</h3>
+      <div class="meta">{{ row.article.source }} · sentiment: {{ e.sentiment }} · {{ row.article.published.strftime('%Y-%m-%d %H:%M') }}</div>
+      <ul class="bullets">
+        {% for b in e.bulletin %}<li>{{ b }}</li>{% endfor %}
+      </ul>
+      {% if e.iocs %}
+        <div class="iocs"><strong>IOCs:</strong>
+          {% for kind, values in e.iocs.items() %}
+            <div><code>{{ kind }}</code>:
+              {% for v in values[:8] %}<code>{{ v }}</code> {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <p><a href="{{ row.article.link }}">Read more →</a></p>
+    </article>
+  {% endfor %}
+{% else %}
+  <div class="empty">No articles match the current filters.<br>Run <code>threatintel run</code> to populate data.</div>
+{% endif %}
+{% endblock %}

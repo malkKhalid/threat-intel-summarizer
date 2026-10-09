@@ -1,0 +1,47 @@
+# User-defined alert filters.
+#
+# An article is alerted when it matches at least one filter AND its urgency
+# score is >= the filter's `min_urgency` (falling back to the global
+# URGENCY_ALERT_THRESHOLD). Filters support industry targeting.
+
+defaults:
+  min_urgency: 70
+  require_iocs: false
+
+filters:
+  - name: financial-sector
+    description: Threats affecting banks, fintech and payment systems.
+    min_urgency: 65
+    keywords: [bank, banking, financial, fintech, swift, payment, atm, credit card]
+    trend_labels: [ransomware, data breach, phishing]
+    feed_tags: [news, vendor, breaches]
+    industries: [finance]
+
+  - name: healthcare-sector
+    description: Threats to hospitals, medical devices and health data.
+    min_urgency: 65
+    keywords: [hospital, healthcare, medical, patient, ehr, health, clinic]
+    trend_labels: [ransomware, data breach]
+    industries: [healthcare]
+
+  - name: energy-and-ics
+    description: Industrial control systems and critical infrastructure.
+    min_urgency: 70
+    keywords: [ics, scada, plc, ot, industrial, energy, grid, pipeline, power plant]
+    trend_labels: [zero-day exploit, APT campaign, denial of service]
+    industries: [energy]
+
+  - name: government-and-defense
+    description: Nation-state, espionage and public sector threats.
+    min_urgency: 70
+    keywords: [government, ministry, defense, military, nation-state, espionage, apt]
+    trend_labels: [APT campaign, zero-day exploit, supply chain attack]
+    industries: [government, defense]
+
+  - name: zero-day-watch
+    description: Any emerging zero-day exploit regardless of industry.
+    min_urgency: 60
+    keywords: [zero-day, 0-day, actively exploited, in the wild, poc, cve-2025]
+    trend_labels: [zero-day exploit, vulnerability]
+    require_iocs: true
+    industries: [all]

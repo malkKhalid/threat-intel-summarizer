@@ -1,0 +1,86 @@
+name: Daily Threat Intel Pipeline
+
+on:
+  schedule:
+    # 06:00 UTC every day
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Do not send real alerts"
+        type: boolean
+        default: false
+      provider:
+        description: "LLM provider (extractive | huggingface)"
+        type: string
+        default: "huggingface"
+
+concurrency:
+  group: daily-pipeline
+  cancel-in-progress: false
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[hf]"
+
+      - name: Run pipeline
+        env:
+          LLM_PROVIDER: ${{ github.event.inputs.provider || 'huggingface' }}
+          HF_CACHE_DIR: ./hf_cache
+          MAX_ARTICLES_PER_FEED: "10"
+          FRESHNESS_HOURS: "24"
+          URGENCY_ALERT_THRESHOLD: "70"
+          # Alerting secrets (set in repo settings -> Secrets)
+          SMTP_ENABLED: ${{ secrets.SMTP_ENABLED }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_TO: ${{ secrets.SMTP_TO }}
+          SLACK_ENABLED: ${{ secrets.SLACK_ENABLED }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TWILIO_ENABLED: ${{ secrets.TWILIO_ENABLED }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_FROM: ${{ secrets.TWILIO_FROM }}
+          TWILIO_TO: ${{ secrets.TWILIO_TO }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            threatintel -v run --dry-run
+          else
+            threatintel -v run
+          fi
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-bulletin
+          path: data/reports/
+          retention-days: 30
+
+      - name: Deploy reports to Namecheap (FTP)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ftp
+          local-dir: ./data/reports/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/threatintel/' }}
+          dangerous-clean-slate: false

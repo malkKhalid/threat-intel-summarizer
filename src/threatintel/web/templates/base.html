@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · Threat Intel</title>
+  <style>
+    :root { --bg:#0f1115; --panel:#181b22; --panel-2:#21252e; --text:#e7e9ee; --muted:#98a2b3;
+            --accent:#4c8dff; --crit:#ff5470; --high:#ff9f43; --med:#f7d154; --low:#3ddc97; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+    header.top { display:flex; align-items:center; justify-content:space-between; gap:1rem;
+                 padding:1rem 1.5rem; background:var(--panel); border-bottom:1px solid #2a2f3a; position:sticky; top:0; }
+    header.top h1 { font-size:1.05rem; margin:0; }
+    header.top .meta { color:var(--muted); font-size:.8rem; }
+    nav a { color:var(--muted); text-decoration:none; margin-left:1rem; font-size:.9rem; }
+    nav a:hover, nav a.active { color:var(--accent); }
+    main { max-width:1080px; margin:1.5rem auto; padding:0 1.5rem; }
+    .filters { display:flex; flex-wrap:wrap; gap:.6rem; background:var(--panel); padding:1rem; border-radius:12px; margin-bottom:1.4rem; }
+    .filters input, .filters select { background:var(--panel-2); border:1px solid #2a2f3a; color:var(--text);
+                                      padding:.5rem .7rem; border-radius:8px; font-size:.9rem; }
+    .filters button { background:var(--accent); border:0; color:#fff; padding:.5rem 1rem; border-radius:8px; cursor:pointer; }
+    .stats { color:var(--muted); font-size:.85rem; margin-bottom:1rem; }
+    .card { background:var(--panel); border-radius:12px; padding:1rem 1.25rem; margin:.9rem 0;
+            border-left:4px solid #555; }
+    .card.crit { border-color:var(--crit); } .card.high { border-color:var(--high); }
+    .card.med { border-color:var(--med); } .card.low { border-color:var(--low); }
+    .card h3 { margin:.2rem 0 .3rem; font-size:1.02rem; }
+    .badge { display:inline-block; font-size:.68rem; font-weight:700; padding:.15rem .5rem; border-radius:999px; color:#0b0d10; }
+    .badge.crit { background:var(--crit); } .badge.high { background:var(--high); }
+    .badge.med { background:var(--med); } .badge.low { background:var(--low); }
+    .meta { color:var(--muted); font-size:.8rem; margin:.2rem 0 .6rem; }
+    .tag { display:inline-block; background:var(--panel-2); color:var(--muted); font-size:.68rem;
+           padding:.12rem .45rem; border-radius:999px; margin-right:.3rem; }
+    ul.bullets { margin:.4rem 0; padding-left:1.1rem; }
+    ul.bullets li { margin:.25rem 0; line-height:1.45; }
+    .iocs { font-size:.8rem; color:var(--muted); margin-top:.5rem; }
+    .iocs code, code { background:var(--panel-2); padding:.05rem .3rem; border-radius:4px; color:#c8d2e0; }
+    a { color:var(--accent); }
+    table { width:100%; border-collapse:collapse; }
+    th, td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid #2a2f3a; font-size:.85rem; }
+    th { color:var(--muted); font-weight:600; }
+    .empty { color:var(--muted); padding:2rem; text-align:center; background:var(--panel); border-radius:12px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>🛡️ Threat Intelligence Summarizer</h1>
+      <div class="meta">{{ title }}</div>
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">Dashboard</a>
+      <a href="{{ url_for('alerts') }}" class="{{ 'active' if request.endpoint == 'alerts' else '' }}">Alerts</a>
+      <a href="{{ url_for('api_bulletin') }}">API</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

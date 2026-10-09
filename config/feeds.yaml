@@ -1,0 +1,75 @@
+# Threat intelligence RSS/Atom sources.
+# `tags` enable industry / category filtering (see config/filters.yaml).
+feeds:
+  - name: AlienVault OTX
+    url: https://cybersecurity.att.com/blogs/rss
+    tags: [vendor, threats]
+  - name: CISA Advisories
+    url: https://www.cisa.gov/cybersecurity-advisories/all.xml
+    tags: [government, advisories, vulnerabilities]
+  - name: CISA News
+    url: https://www.cisa.gov/news.xml
+    tags: [government, news]
+  - name: The Hacker News
+    url: https://feeds.feedburner.com/TheHackersNews
+    tags: [news, threats]
+  - name: BleepingComputer
+    url: https://www.bleepingcomputer.com/feed/
+    tags: [news, malware, ransomware]
+  - name: Krebs on Security
+    url: https://krebsonsecurity.com/feed/
+    tags: [investigation, breaches]
+  - name: Dark Reading
+    url: https://www.darkreading.com/rss.xml
+    tags: [news, enterprise]
+  - name: The Record
+    url: https://therecord.media/feed
+    tags: [news, cybercrime]
+  - name: SecurityWeek
+    url: https://www.securityweek.com/feed/
+    tags: [news, enterprise]
+  - name: Help Net Security
+    url: https://www.helpnetsecurity.com/feed/
+    tags: [news, vulnerabilities]
+  - name: CyberScoop
+    url: https://cyberscoop.com/feed/
+    tags: [news, policy]
+  - name: Sophos News
+    url: https://news.sophos.com/en-us/feed/
+    tags: [vendor, malware]
+  - name: Securelist (Kaspersky)
+    url: https://securelist.com/feed/
+    tags: [vendor, malware, apt]
+  - name: Unit 42 (Palo Alto)
+    url: https://unit42.paloaltonetworks.com/feed/
+    tags: [vendor, apt, research]
+  - name: Cisco Talos
+    url: https://blog.talosintelligence.com/rss/
+    tags: [vendor, malware, research]
+  - name: Rapid7 Blog
+    url: https://blog.rapid7.com/rss/
+    tags: [vendor, vulnerabilities]
+  - name: SANS ISC
+    url: https://isc.sans.edu/rssfeed.xml
+    tags: [community, iocs]
+  - name: Malwarebytes Labs
+    url: https://www.malwarebytes.com/blog/feed/index.xml
+    tags: [vendor, malware]
+  - name: Google Project Zero
+    url: https://googleprojectzero.blogspot.com/feeds/posts/default
+    tags: [research, zero-day]
+  - name: Microsoft Security
+    url: https://www.microsoft.com/security/blog/feed/
+    tags: [vendor, enterprise]
+  - name: Exploit-DB
+    url: https://www.exploit-db.com/rss.xml
+    tags: [exploits, vulnerabilities]
+  - name: Packet Storm
+    url: https://packetstormsecurity.com/feeds/
+    tags: [exploits, vulnerabilities]
+  - name: NVD Recent CVEs
+    url: https://nvd.nist.gov/feeds/xml/cve/misc/nvd-rss.xml
+    tags: [vulnerabilities, cve]
+  - name: Talos Vulnerability Advisories
+    url: https://www.talosintelligence.com/rss/vulnerability-advisories
+    tags: [advisories, vulnerabilities]
