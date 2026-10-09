@@ -46,3 +46,6 @@ Thumbs.db
 
 # Node (dashboard tooling if any)
 node_modules/
+
+# Local progress/handoff notes (not for the public repo)
+PROGRESS.md
