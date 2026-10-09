@@ -51,9 +51,11 @@ class Pipeline:
         self.storage = Storage(self.settings.database_path)
         self.analyzer = Analyzer(provider=provider)
         self.feeds = load_feeds()
+        default_min_urgency, rules = load_filter_rules()
         self.filter_engine = FilterEngine(
-            *load_filter_rules(),
+            rules,
             source_tags=build_source_tags(self.feeds),
+            default_min_urgency=default_min_urgency,
         )
         self.dispatcher = dispatcher or AlertDispatcher()
 
